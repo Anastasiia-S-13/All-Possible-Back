@@ -15,6 +15,8 @@ const feedbackSchema = new Schema(
     },
     rate: {
       type: Number,
+      min: 1,
+      max: 5,
       required: true,
     },
     userId: {
