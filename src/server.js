@@ -1,15 +1,19 @@
-import 'dotenv/config';
+// src/server.js
+import cookieParser from 'cookie-parser';
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import { logger } from './middleware/logger.js';
-import { connectMongoDB } from './db/connectMongoDB.js';
-import { notFoundHandler } from './middleware/notFoundHandler.js';
-import { errorHandler } from './middleware/errorHandler.js';
+import 'dotenv/config';
 import { errors } from 'celebrate';
+import { notFoundHandler } from '../src/middleware/notFoundHandler.js';
+import { errorHandler } from '../src/middleware/errorHandler.js';
+import { connectMongoDB } from './db/connectMongoDB.js';
+import categoriesRoutes from './routes/categoriesRoutes.js';
+
+import { logger } from './middleware/logger.js';
+
+import userRoutes from './routes/userRoutes.js';
 import feedbacksRoutes from './routes/feedbacksRoutes.js';
-import bookingRoutes from './routes/bookingRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -21,8 +25,9 @@ app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
 
+app.use(userRoutes);
 app.use(feedbacksRoutes);
-app.use(bookingRoutes);
+app.use(categoriesRoutes);
 
 app.use(notFoundHandler);
 app.use(errors());
