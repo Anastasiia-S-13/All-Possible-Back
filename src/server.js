@@ -1,22 +1,33 @@
 // src/server.js
 import cookieParser from 'cookie-parser';
 import express from 'express';
-import { connectMongoDB } from './db/connectMongoDB.js';
+import helmet from 'helmet';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import userRoutes from './routes/userRoutes.js';
+import 'dotenv/config';
+import feedbacksRoutes from './routes/feedbacksRoutes.js';
+import { logger } from './middleware/logger.js';
+import { connectMongoDB } from './db/connectMongoDB.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
-import 'dotenv/config';
+import { errors } from 'celebrate';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
 
+app.use(logger);
+
+app.use(helmet());
 app.use(express.json());
+app.use(cors());
 app.use(cookieParser());
 
 app.use(userRoutes);
+app.use(feedbacksRoutes);
+
 
 app.use(notFoundHandler);
-
 app.use(errorHandler);
 
 await connectMongoDB();
