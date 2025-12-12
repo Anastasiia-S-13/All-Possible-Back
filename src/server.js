@@ -4,6 +4,11 @@ import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import 'dotenv/config';
+import { errors } from 'celebrate';
+import { notFoundHandler } from '../src/middleware/notFoundHandler.js';
+import { errorHandler } from '../src/middleware/errorHandler.js';
+import { connectMongoDB } from './db/connectMongoDB.js';
+import categoriesRoutes from './routes/categoriesRoutes.js';
 
 import { logger } from './middleware/logger.js';
 import { connectMongoDB } from './db/connectMongoDB.js';
@@ -26,6 +31,7 @@ app.use(cookieParser());
 
 app.use(userRoutes);
 app.use(feedbacksRoutes);
+app.use(categoriesRoutes);
 
 app.use(notFoundHandler);
 app.use(errors());
