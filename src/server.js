@@ -1,19 +1,23 @@
 import express from 'express';
+import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import mongoose from 'mongoose';
 import { errors } from 'celebrate';
 import 'dotenv/config';
 
 import { logger } from './middleware/logger.js';
+import { connectMongoDB } from './db/connectMongoDB.js';
+import { notFoundHandler } from './middleware/notFoundHandler.js';
+import { errorHandler } from './middleware/errorHandler.js';
+
 import authRoutes from './routes/authRoutes.js';
+import feedbacksRoutes from './routes/feedbacksRoutes.js';
 
 const app = express();
+const PORT = process.env.PORT ?? 3000;
 
-const PORT = process.env.PORT ?? 3001;
-
-// Middleware
 app.use(logger);
+app.use(helmet());
 app.use(express.json());
 app.use(cors({
   credentials: true,
@@ -21,29 +25,21 @@ app.use(cors({
 }));
 app.use(cookieParser());
 
-// Auth routes
 app.use('/api/auth', authRoutes);
+app.use(feedbacksRoutes);
 
-// Celebrate validation errors
+app.use(notFoundHandler);
 app.use(errors());
+app.use(errorHandler);
 
-// Error handler
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(err.status || 500).json({ error: err.message || 'Server error' });
-});
-
-// Connect to MongoDB and start server
 const startServer = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log('MongoDB connected');
-
+    await connectMongoDB();
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
   } catch (error) {
-    console.error('Failed to connect to MongoDB:', error);
+    console.error('Failed to start server:', error);
     process.exit(1);
   }
 };
