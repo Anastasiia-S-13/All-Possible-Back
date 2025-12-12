@@ -1,6 +1,6 @@
 import createHttpError from "http-errors";
 import { Booking } from "../models/booking.js";
-// import { Tool } from "../models/tool.js"; //десь так напевно буде називатися модель))
+import { Tool } from "../models/tool.js";
 
 import { checkAvailabilitySchema } from "../validations/bookingValidations.js";
 

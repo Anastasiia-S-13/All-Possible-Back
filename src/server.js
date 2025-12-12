@@ -1,4 +1,4 @@
-// src/server.js
+
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import helmet from 'helmet';
@@ -9,10 +9,9 @@ import { notFoundHandler } from '../src/middleware/notFoundHandler.js';
 import { errorHandler } from '../src/middleware/errorHandler.js';
 import { connectMongoDB } from './db/connectMongoDB.js';
 import categoriesRoutes from './routes/categoriesRoutes.js';
-
 import { logger } from './middleware/logger.js';
-
 import userRoutes from './routes/userRoutes.js';
+import bookingRoutes from './routes/bookingRoutes.js';
 import feedbacksRoutes from './routes/feedbacksRoutes.js';
 
 const app = express();
@@ -28,6 +27,7 @@ app.use(cookieParser());
 app.use(userRoutes);
 app.use(feedbacksRoutes);
 app.use(categoriesRoutes);
+app.use(bookingRoutes);
 
 app.use(notFoundHandler);
 app.use(errors());
