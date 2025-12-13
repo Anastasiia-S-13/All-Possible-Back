@@ -7,7 +7,6 @@ export const getToolById = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    // Перевірка валідності ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid ID format" });
     }
