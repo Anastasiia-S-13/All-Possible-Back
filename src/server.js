@@ -1,4 +1,5 @@
 
+
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import helmet from 'helmet';
@@ -12,8 +13,12 @@ import categoriesRoutes from './routes/categoriesRoutes.js';
 
 import { logger } from './middleware/logger.js';
 import userRoutes from './routes/userRoutes.js';
+
+
+
 import feedbacksRoutes from './routes/feedbacksRoutes.js';
 import toolsRoutes from './routes/toolsRoutes.js';
+
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -25,14 +30,21 @@ app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
 
+
+app.use(toolsRoutes);
+
 app.use(userRoutes);
+
 app.use(feedbacksRoutes);
 app.use(categoriesRoutes);
 app.use(toolsRoutes);
 
+
 app.use(notFoundHandler);
 app.use(errors());
 app.use(errorHandler);
+
+
 
 await connectMongoDB();
 
