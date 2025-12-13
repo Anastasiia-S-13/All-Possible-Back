@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-import { Tool } from "../models/Tool.js";
+import { Tool } from "../models/tool.js";
+
 
 
 export const getToolById = async (req, res, next) => {
