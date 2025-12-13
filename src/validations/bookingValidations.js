@@ -102,21 +102,6 @@ export const createBookingSchema = {
 
 
 export const checkAvailabilitySchema = Joi.object({
-  startDate: Joi.date()
-    .iso()
-    .required()
-    .messages({
-      'any.required': requiredStartData,
-      'date.base': 'Invalid start date format',
-    }),
+  toolId: Joi.string().hex().length(24).required()
 
-  endDate: Joi.date()
-    .iso()
-    .greater(Joi.ref('startDate'))
-    .required()
-    .messages({
-      'date.greater': 'End date must be after start date',
-      'any.required': requiredEndData,
-      'date.base': 'Invalid end date format',
-    }),
 });
