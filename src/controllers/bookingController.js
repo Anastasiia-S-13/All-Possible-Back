@@ -30,7 +30,7 @@ export const createBooking = async (req, res, next) => {
   } = req.body;
 
 
-  const userId = req.userId;
+  const userId = req.user._id;
 
   const tool = await Tool.findById(toolId);
   if (!tool) {
