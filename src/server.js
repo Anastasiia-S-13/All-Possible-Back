@@ -15,9 +15,7 @@ import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 // Routes
-import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
-import publicUserRoutes from './routes/publicUserRoutes.js';
 import feedbacksRoutes from './routes/feedbacksRoutes.js';
 import categoriesRoutes from './routes/categoriesRoutes.js';
 import toolsRoutes from './routes/toolsRoutes.js';
@@ -27,35 +25,16 @@ const PORT = process.env.PORT ?? 3000;
 
 // Global middleware
 app.use(helmet());
+app.use(cors());
 app.use(express.json());
-app.use(
-  cors({
-    credentials: true,
-    origin: (origin, callback) => {
-      const allowedOrigins = [
-        process.env.FRONTEND_URL,
-        'http://localhost:3000',
-        'http://localhost:3005',
-      ].filter(Boolean);
-
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-  })
-);
 app.use(cookieParser());
 app.use(pino());
 app.use(logger);
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use(userRoutes);
-app.use(publicUserRoutes);
-app.use(feedbacksRoutes);
-app.use(categoriesRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/feedbacks', feedbacksRoutes);
+app.use('/api/categories', categoriesRoutes);
 app.use('/api/tools', toolsRoutes);
 
 // Error handlers
