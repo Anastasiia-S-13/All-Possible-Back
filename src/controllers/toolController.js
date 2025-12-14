@@ -1,24 +1,35 @@
-import mongoose from "mongoose";
-import { Tool } from "../models/tool.js";
-
-
+import createHttpError from 'http-errors';
+import { Tool } from '../models/tool.js';
 
 export const getToolById = async (req, res, next) => {
-  try {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid ID format" });
-    }
-
-    const tool = await Tool.findById(id);
-
-    if (!tool) {
-      return res.status(404).json({ message: "Tool not found" });
-    }
-
-    return res.status(200).json(tool);
-  } catch (error) {
-    next(error);
+  if (!/^[0-9a-fA-F]{24}$/.test(id)) {
+    return next(createHttpError(400, 'Invalid tool id'));
   }
+
+  const tool = await Tool.findById(id);
+
+  if (!tool) {
+    return next(createHttpError(404, 'Tool not found'));
+  }
+
+  res.status(200).json(tool);
+};
+
+export const deleteTool = async (req, res, next) => {
+  const { id: toolId } = req.params;
+
+  const tool = await Tool.findById(toolId);
+  if (!tool) {
+    return next(createHttpError(404, 'Tool not found'));
+  }
+
+  if (tool.owner.toString() !== req.user._id.toString()) {
+    return next(createHttpError(403, 'Forbidden: not the owner'));
+  }
+
+  await tool.deleteOne();
+
+  res.status(200).json({ message: 'Tool deleted successfully' });
 };
