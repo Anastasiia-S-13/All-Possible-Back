@@ -1,6 +1,6 @@
 import createHttpError from "http-errors";
 import { Booking } from "../models/booking.js";
-import { Tool } from "../models/Tool.js";
+import { Tool } from "../models/tool.js";
 
 
 const datesOverlap = (start1, end1, start2, end2) => {
