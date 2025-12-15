@@ -1534,6 +1534,136 @@ export default {
           },
         },
       },
+      post: {
+        summary: 'Create feedback for a tool',
+        description:
+          'Create feedback for a specific tool and recalculate tool and owner rating.',
+        tags: ['Feedbacks'],
+        security: [{ bearerAuth: [] }],
+        parameters: [
+          {
+            name: 'toolId',
+            in: 'path',
+            required: true,
+            description: 'Tool ID',
+            schema: {
+              type: 'string',
+              example: '64e8a5f12c9a4a0012ab34cd',
+            },
+          },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['name', 'rate'],
+                properties: {
+                  name: {
+                    type: 'string',
+                    minLength: 2,
+                    maxLength: 15,
+                    example: 'Іван',
+                  },
+                  description: {
+                    type: 'string',
+                    maxLength: 100,
+                    example: 'Чудовий інструмент, рекомендую!',
+                  },
+                  rate: {
+                    type: 'number',
+                    minimum: 0.5,
+                    maximum: 5,
+                    example: 4.5,
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          201: {
+            description: 'Feedback created successfully',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    feedback: {
+                      $ref: '#/components/schemas/Feedbacks',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          400: {
+            description: 'Invalid toolId or validation error',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    message: {
+                      type: 'string',
+                      example: 'Invalid toolId or validation error',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          401: {
+            description: 'Unauthorized',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    message: {
+                      type: 'string',
+                      example: 'Unauthorized',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          404: {
+            description: 'Tool not found',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    message: {
+                      type: 'string',
+                      example: 'Tool not found',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          500: {
+            description: 'Internal Server Error',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    message: {
+                      type: 'string',
+                      example: 'Something went wrong',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     },
   },
 };
