@@ -171,6 +171,131 @@ export default {
           },
         },
       },
+      CreateBookingRequest: {
+        type: 'object',
+        required: [
+          'toolId',
+          'firstName',
+          'lastName',
+          'phone',
+          'startDate',
+          'endDate',
+          'deliveryCity',
+          'novaPoshtaBranch',
+        ],
+        properties: {
+          toolId: {
+            type: 'string',
+            description: 'Tool ID',
+            example: '692db3ffab59e437964311d4',
+          },
+
+          firstName: {
+            type: 'string',
+            example: 'Іван',
+          },
+
+          lastName: {
+            type: 'string',
+            example: 'Петренко',
+          },
+
+          phone: {
+            type: 'string',
+            example: '+380991234567',
+          },
+
+          startDate: {
+            type: 'string',
+            format: 'date-time',
+            example: '2025-01-10T00:00:00.000Z',
+          },
+
+          endDate: {
+            type: 'string',
+            format: 'date-time',
+            example: '2025-01-12T00:00:00.000Z',
+          },
+
+          deliveryCity: {
+            type: 'string',
+            example: 'Київ',
+          },
+
+          novaPoshtaBranch: {
+            type: 'string',
+            example: 'Відділення №12',
+          },
+        },
+      },
+      CreateBookingResponse: {
+        type: 'object',
+        properties: {
+          success: {
+            type: 'boolean',
+            example: true,
+          },
+          message: {
+            type: 'string',
+            example: 'Успішне бронювання',
+          },
+          booked: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+
+              userId: { type: 'string' },
+
+              tool: {
+                type: 'object',
+                properties: {
+                  id: { type: 'string' },
+                  name: { type: 'string' },
+                  pricePerDay: { type: 'number' },
+                },
+              },
+
+              customerInfo: {
+                type: 'object',
+                properties: {
+                  firstName: { type: 'string' },
+                  lastName: { type: 'string' },
+                  phone: { type: 'string' },
+                },
+              },
+
+              rentalPeriod: {
+                type: 'object',
+                properties: {
+                  startDate: { type: 'string', format: 'date-time' },
+                  endDate: { type: 'string', format: 'date-time' },
+                  days: { type: 'number' },
+                },
+              },
+
+              delivery: {
+                type: 'object',
+                properties: {
+                  city: { type: 'string' },
+                  branch: { type: 'string' },
+                },
+              },
+
+              totalPrice: { type: 'number' },
+
+              status: {
+                type: 'string',
+                enum: ['pending', 'confirmed'],
+              },
+
+              createdAt: {
+                type: 'string',
+                format: 'date-time',
+              },
+            },
+          },
+        },
+      },
     },
   },
   paths: {
@@ -608,6 +733,94 @@ export default {
         },
       },
     },
+    '/user/{id}/tools': {
+      get: {
+        tags: ['User'],
+        summary: 'Get info about user tools',
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            schema: {
+              type: 'string',
+              example: '609e129e8f1b2c0015b8b456',
+            },
+            description: 'User id',
+          },
+        ],
+        responses: {
+          200: {
+            description: 'List of user tools',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    tools: {
+                      type: 'array',
+                      $ref: '#/components/schemas/Tool',
+                    },
+                  },
+                },
+                example: {
+                  tool: {
+                    _id: '692db3ffab59e437964311az1',
+                    owner: 'John Doe',
+                    category: '6704d9c7f1a3b8c2d5e4f6z1',
+                    name: 'Мийка високого тиску Karcher',
+                    description:
+                      'Потужна акумуляторна мийка для побутового використання',
+                    pricePerDay: 300,
+                    images: 'https://example.com/img/example-image.webp',
+                    rating: 0,
+                    specifications: {
+                      Тиск: '110 бар',
+                      Вага: '4.5 кг',
+                    },
+                    rentalTerms: 'TerЗастава 2500 грн. Паспорт.ms',
+                    bookedDates: [],
+                    feedbacks: [],
+                  },
+                },
+              },
+            },
+          },
+          401: {
+            description: 'Not authenticated',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    message: {
+                      type: 'string',
+                      example: 'Not authenticated',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          500: {
+            description: 'Internal Server Error',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    message: {
+                      type: 'string',
+                      example: 'Something went wrong',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
     '/tools': {
       get: {
         tags: ['Tool'],
@@ -745,15 +958,17 @@ export default {
                     _id: '692db3ffab59e437964311az1',
                     owner: 'John Doe',
                     category: '6704d9c7f1a3b8c2d5e4f6z1',
-                    description: 'Tool description',
+                    name: 'Мийка високого тиску Karcher',
+                    description:
+                      'Потужна акумуляторна мийка для побутового використання',
                     pricePerDay: 300,
                     images: 'https://example.com/img/example-image.webp',
-                    rating: 5,
+                    rating: 0,
                     specifications: {
-                      spec1: 'value',
-                      spec2: 'value',
+                      Тиск: '110 бар',
+                      Вага: '4.5 кг',
                     },
-                    rentalTerms: 'Terms',
+                    rentalTerms: 'TerЗастава 2500 грн. Паспорт.ms',
                     bookedDates: [],
                     feedbacks: [],
                   },
@@ -932,6 +1147,220 @@ export default {
                       type: 'string',
                       example: 'Forbidden: not the owner',
                     },
+                  },
+                },
+              },
+            },
+          },
+          500: {
+            description: 'Internal Server Error',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    message: {
+                      type: 'string',
+                      example: 'Something went wrong',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/bookings': {
+      post: {
+        tags: ['Bookings'],
+        summary: 'Create booking',
+        description: 'Create a booking for a tool',
+        security: [{ bearerAuth: [] }],
+
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/CreateBookingRequest',
+              },
+            },
+          },
+        },
+
+        responses: {
+          201: {
+            description: 'Booking created successfully',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/CreateBookingResponse',
+                },
+              },
+            },
+          },
+
+          400: {
+            description: 'Invalid data or price calculation error',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    message: {
+                      type: 'string',
+                      example: 'Недійсний розрахунок загальної ціни',
+                    },
+                  },
+                },
+              },
+            },
+          },
+
+          404: {
+            description: 'Tool not found',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    message: {
+                      type: 'string',
+                      example: 'Інструмент не знайдено',
+                    },
+                  },
+                },
+              },
+            },
+          },
+
+          409: {
+            description: 'Tool not available for selected dates',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    message: {
+                      type: 'string',
+                      example:
+                        'Інструмент більше не доступний для вибраних дат',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/categories': {
+      get: {
+        tags: ['Categories'],
+        summary: 'Get list of categories',
+        responses: {
+          200: {
+            description: 'List of categories',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    categories: {
+                      type: 'array',
+                      $ref: '#/components/schemas/Category',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          401: {
+            description: 'Not found categories',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    message: {
+                      type: 'string',
+                      example: 'Categories not found',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          500: {
+            description: 'Internal Server Error',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    message: {
+                      type: 'string',
+                      example: 'Something went wrong',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/feedbacks': {
+      get: {
+        tags: ['Feedbacks'],
+        summary: 'get all feedbacks',
+        parameters: [
+          {
+            in: 'query',
+            name: 'page',
+            schema: { type: 'integer', default: 1 },
+            description: 'Page number',
+          },
+          {
+            in: 'query',
+            name: 'perPage',
+            schema: { type: 'integer', default: 3 },
+            description: 'Items per page',
+          },
+        ],
+        responses: {
+          200: {
+            description: 'List of feedbacks',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    page: { type: 'integer' },
+                    perPage: { type: 'integer' },
+                    totalFeedbacks: { type: 'integer' },
+                    totalPages: { type: 'integer' },
+                    feedbacks: {
+                      type: 'array',
+                      $ref: '#/components/schemas/Feedbacks',
+                    },
+                  },
+                },
+                example: {
+                  tools: {
+                    page: 1,
+                    perPage: 3,
+                    totalFeedbacks: 10,
+                    totalPages: 10,
+                    feedbacks: [
+                      {
+                        _id: '692db3ffab59e437964311a2',
+                        name: 'John Doe',
+                        description: 'Very good tool',
+                        rate: 5,
+                      },
+                    ],
                   },
                 },
               },
