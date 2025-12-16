@@ -1153,82 +1153,83 @@ export default {
               },
             },
           },
-        },
-        responses: {
-          200: {
-            description: 'Tool information',
-            content: {
-              'application/json': {
-                schema: {
-                  $ref: '#/components/schemas/Tool',
-                  properties: {
-                    message: {
-                      type: 'string',
-                      example: 'Tool updated successfully',
+
+          responses: {
+            200: {
+              description: 'Tool updated successfully',
+              content: {
+                'application/json': {
+                  schema: {
+                    $ref: '#/components/schemas/Tool',
+                    properties: {
+                      message: {
+                        type: 'string',
+                        example: 'Tool updated successfully',
+                      },
                     },
                   },
                 },
               },
             },
-          },
-          400: {
-            description: 'Invalid tool id',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    message: {
-                      type: 'string',
-                      example: 'Invalid tool id',
+            400: {
+              description: 'Invalid tool id',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      message: {
+                        type: 'string',
+                        example: 'Invalid tool id',
+                      },
                     },
                   },
                 },
               },
             },
-          },
-          404: {
-            description: 'Tool not found',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    message: {
-                      type: 'string',
-                      example: 'Tool not found',
+            404: {
+              description: 'Tool not found',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      message: {
+                        type: 'string',
+                        example: 'Tool not found',
+                      },
                     },
                   },
                 },
               },
             },
-          },
-          403: {
-            description: 'Not the owner',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    message: {
-                      type: 'string',
-                      example: 'Forbidden: not the owner',
+            403: {
+              description: 'Not the owner',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      message: {
+                        type: 'string',
+                        example: 'Forbidden: not the owner',
+                      },
                     },
                   },
                 },
               },
             },
-          },
-          500: {
-            description: 'Internal Server Error',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    message: {
-                      type: 'string',
-                      example: 'Something went wrong',
+            500: {
+              description: 'Internal Server Error',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      message: {
+                        type: 'string',
+                        example: 'Something went wrong',
+                      },
                     },
                   },
                 },

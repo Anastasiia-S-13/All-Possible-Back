@@ -21,15 +21,6 @@ const userSchema = new mongoose.Schema(
       required: false,
       default: 'https://ac.goit.global/fullstack/react/default-avatar.jpg',
     },
-    rating: {
-      type: Number,
-      default: 0,
-    },
-
-    feedbackCount: {
-      type: Number,
-      default: 0,
-    },
   },
   {
     timestamps: true,
