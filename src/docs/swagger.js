@@ -922,6 +922,84 @@ export default {
           },
         },
       },
+      post: {
+        tags: ['Tool'],
+        summary: 'Create new tool',
+        requestBody: {
+          required: true,
+          content: {
+            'multipart/form-data': {
+              schema: {
+                $ref: '#/components/schemas/CreateToolRequest',
+              },
+            },
+          },
+        },
+        responses: {
+          201: {
+            description: 'Tool created successfully',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: 'components/schemas/Tool',
+                },
+                example: {
+                  tool: {
+                    _id: '692db3ffab59e437964311az1',
+                    owner: 'John Doe',
+                    category: '6704d9c7f1a3b8c2d5e4f6z1',
+                    name: 'Мийка високого тиску Karcher',
+                    description:
+                      'Потужна акумуляторна мийка для побутового використання',
+                    pricePerDay: 300,
+                    images: 'https://example.com/img/example-image.webp',
+                    rating: 0,
+                    specifications: {
+                      Тиск: '110 бар',
+                      Вага: '4.5 кг',
+                    },
+                    rentalTerms: 'TerЗастава 2500 грн. Паспорт.ms',
+                    bookedDates: [],
+                    feedbacks: [],
+                  },
+                },
+              },
+            },
+          },
+          400: {
+            description: 'Image is required',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    message: {
+                      type: 'string',
+                      example: 'Image is required',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          500: {
+            description: 'Internal Server Error',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    message: {
+                      type: 'string',
+                      example: 'Something went wrong',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     },
     '/tools/{id}': {
       get: {
@@ -1010,52 +1088,92 @@ export default {
           },
         },
       },
-      post: {
+      patch: {
         tags: ['Tool'],
-        summary: 'Create new tool',
+        summary: 'Update tool',
+        description:
+          'Partially update tool fields. Only the owner can update the tool.',
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            schema: {
+              type: 'string',
+              example: '692db3ffab59e437964311az1',
+            },
+            description: 'Tool id',
+          },
+        ],
         requestBody: {
           required: true,
           content: {
-            'multipart/form-data': {
+            'application/json': {
               schema: {
-                $ref: '#/components/schemas/CreateToolRequest',
+                type: 'object',
+                minProperties: 1,
+                properties: {
+                  name: {
+                    type: 'string',
+                    minLength: 3,
+                    maxLength: 96,
+                  },
+                  pricePerDay: {
+                    type: 'number',
+                    minimum: 0,
+                  },
+                  category: {
+                    type: 'string',
+                    description: 'Category ID',
+                  },
+                  description: {
+                    type: 'string',
+                    minLength: 20,
+                    maxLength: 2000,
+                  },
+                  rentalTerms: {
+                    type: 'string',
+                    minLength: 20,
+                    maxLength: 2000,
+                  },
+                  specifications: {
+                    type: 'object',
+                    additionalProperties: {
+                      type: 'string',
+                    },
+                    example: {
+                      Тиск: '110 бар',
+                      Вага: '4.5 кг',
+                    },
+                  },
+                  images: {
+                    type: 'string',
+                    format: 'uri',
+                  },
+                },
               },
             },
           },
         },
         responses: {
-          201: {
-            description: 'Tool created successfully',
+          200: {
+            description: 'Tool information',
             content: {
               'application/json': {
                 schema: {
-                  $ref: 'components/schemas/Tool',
-                },
-                example: {
-                  tool: {
-                    _id: '692db3ffab59e437964311az1',
-                    owner: 'John Doe',
-                    category: '6704d9c7f1a3b8c2d5e4f6z1',
-                    name: 'Мийка високого тиску Karcher',
-                    description:
-                      'Потужна акумуляторна мийка для побутового використання',
-                    pricePerDay: 300,
-                    images: 'https://example.com/img/example-image.webp',
-                    rating: 0,
-                    specifications: {
-                      Тиск: '110 бар',
-                      Вага: '4.5 кг',
+                  $ref: '#/components/schemas/Tool',
+                  properties: {
+                    message: {
+                      type: 'string',
+                      example: 'Tool updated successfully',
                     },
-                    rentalTerms: 'TerЗастава 2500 грн. Паспорт.ms',
-                    bookedDates: [],
-                    feedbacks: [],
                   },
                 },
               },
             },
           },
           400: {
-            description: 'Image is required',
+            description: 'Invalid tool id',
             content: {
               'application/json': {
                 schema: {
@@ -1063,7 +1181,39 @@ export default {
                   properties: {
                     message: {
                       type: 'string',
-                      example: 'Image is required',
+                      example: 'Invalid tool id',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          404: {
+            description: 'Tool not found',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    message: {
+                      type: 'string',
+                      example: 'Tool not found',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          403: {
+            description: 'Not the owner',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    message: {
+                      type: 'string',
+                      example: 'Forbidden: not the owner',
                     },
                   },
                 },
