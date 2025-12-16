@@ -35,7 +35,6 @@ export default {
         bearerFormat: 'JWT',
       },
     },
-
     schemas: {
       User: {
         type: 'object',
