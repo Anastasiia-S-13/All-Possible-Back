@@ -1,75 +1,28 @@
-import { Router } from 'express';
-import {
-  createToolSchema,
-  getToolsSchema,
-  updateToolSchema,
-} from '../validations/validateTool.js';
 
-import {
-  createTool,
-  getTools,
-  getToolById,
-  deleteTool,
-  updateTool,
-} from '../controllers/toolController.js';
-
+import { Router } from "express";
+import { createToolSchema, getToolsSchema } from "../validations/validateTool.js";
+import { createTool, getTools } from "../controllers/toolController.js";
 import { authenticate } from '../middleware/authenticate.js';
+import { getToolById, deleteTool, } from '../controllers/toolController.js';
 import { celebrate } from 'celebrate';
-
 import { createBookingSchema } from '../validations/bookingValidations.js';
 import { createBooking } from '../controllers/bookingController.js';
-
-import { upload } from '../middleware/multer.js';
-import { parseJsonFields } from '../utils/parseJsonFields.js';
-
+import { upload } from "../middleware/multer.js";
 const router = Router();
 
-/**
- * Create tool
- */
-router.post(
-  '/tools',
-  authenticate,
-  upload.single('image'),
-  parseJsonFields,
-  celebrate(createToolSchema),
-  createTool
-);
+router.post("/tools",  authenticate, celebrate(createToolSchema),upload.single("images"), createTool);
+router.get("/tools", celebrate(getToolsSchema), getTools);
 
-/**
- * Get tools list
- */
-router.get('/tools', celebrate(getToolsSchema), getTools);
 
-/**
- * Get tool by id
- */
+
+
+
 router.get('/tools/:id', getToolById);
 
-/**
- * Delete tool
- */
+// DELETE /tools/:id — видалення інструменту власником
 router.delete('/tools/:id', authenticate, deleteTool);
 
-/**
- * Create booking
- */
-router.post(
-  '/:toolId/bookings',
-  authenticate,
-  celebrate(createBookingSchema),
-  createBooking
-);
+router.post('/:toolId/bookings', authenticate, celebrate(createBookingSchema), createBooking);
 
-/**
- * Update tool
- */
-router.patch(
-  '/tools/:id',
-  authenticate,
-  celebrate(updateToolSchema),
-  updateTool
-);
 
 export default router;
-

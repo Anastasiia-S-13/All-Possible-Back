@@ -1,6 +1,6 @@
 import createHttpError from 'http-errors';
 import { Tool } from '../models/tool.js';
-import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { saveFileToCloudinary } from "../utils/saveFileToCloudinary.js";
 
 export const getToolById = async (req, res, next) => {
   const { id } = req.params;
@@ -17,6 +17,7 @@ export const getToolById = async (req, res, next) => {
 
   res.status(200).json(tool);
 };
+
 
 export const deleteTool = async (req, res, next) => {
   const { id: toolId } = req.params;
@@ -35,21 +36,23 @@ export const deleteTool = async (req, res, next) => {
   res.status(200).json({ message: 'Tool deleted successfully' });
 };
 
+
 export const createTool = async (req, res) => {
-  if (!req.file) {
-    throw createHttpError(400, 'Image is required');
-  }
+if(!req.file) {
+  throw createHttpError(400, "Image is required");
+}
+const result = await saveFileToCloudinary(req.file.buffer);
+    const tool = await Tool.create({
+      ...req.body,
+      owner: req.user._id,
+      images: result.secure_url,
+    });
 
-  const result = await saveFileToCloudinary(req.file.buffer);
+    res.status(201).json(tool);
 
-  const tool = await Tool.create({
-    ...req.body,
-    owner: req.user._id,
-    images: result.secure_url,
-  });
-
-  res.status(201).json(tool);
 };
+
+
 
 export const getTools = async (req, res) => {
   const { page = 1, perPage = 10, category, search } = req.query;
@@ -58,12 +61,12 @@ export const getTools = async (req, res) => {
   const toolsQuery = Tool.find();
 
   if (category) {
-    const categories = category.split(',');
-    toolsQuery.where('category').in(categories);
+    const categories = category.split(",");
+    toolsQuery.where("category").in(categories);
   }
 
   if (search) {
-    toolsQuery.where('name').regex(new RegExp(search, 'i'));
+    toolsQuery.where("name").regex(new RegExp(search, "i"));
   }
 
   const [totalTools, tools] = await Promise.all([
@@ -82,41 +85,4 @@ export const getTools = async (req, res) => {
   });
 };
 
-export const updateTool = async (req, res, next) => {
-  try {
-    const { id: toolId } = req.params;
 
-    if (!/^[0-9a-fA-F]{24}$/.test(toolId)) {
-      return next(createHttpError(400, 'Invalid tool id'));
-    }
-
-    const tool = await Tool.findById(toolId);
-    if (!tool) {
-      return next(createHttpError(404, 'Tool not found'));
-    }
-
-    if (tool.owner.toString() !== req.user._id.toString()) {
-      return next(createHttpError(403, 'Forbidden: not the owner'));
-    }
-
-    const allowed = [
-      'category',
-      'name',
-      'description',
-      'pricePerDay',
-      'rentalTerms',
-      'specifications',
-      'images',
-    ];
-
-    for (const key of Object.keys(req.body)) {
-      if (allowed.includes(key)) tool[key] = req.body[key];
-    }
-
-    await tool.save();
-
-    res.status(200).json(tool);
-  } catch (err) {
-    next(err);
-  }
-};
