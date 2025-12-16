@@ -24,11 +24,6 @@ const feedbackSchema = new Schema(
       ref: 'User',
       required: true,
     },
-    toolId: {
-      type: Schema.Types.ObjectId,
-      ref: 'Tool',
-      required: true,
-    },
   },
   { timestamps: true, versionKey: false },
 );

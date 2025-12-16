@@ -19,16 +19,3 @@ export const getToolsSchema = {
     search: Joi.string().allow(''),
   }),
 };
-
-export const updateToolSchema = {
-  [Segments.BODY]: Joi.object({
-    name: Joi.string().min(3).max(96),
-    pricePerDay: Joi.number().min(0),
-    category: Joi.string().hex().length(24),
-    description: Joi.string().min(20).max(2000),
-    rentalTerms: Joi.string().min(20).max(2000),
-    specifications: Joi.object().pattern(Joi.string(), Joi.string()),
-    images: Joi.string().uri(),
-  }).min(1),
-};
-
